@@ -1,14 +1,15 @@
 const express = require('express')
 const app = express();
+let port = process.env.PORT;
+
+if (port == null || port == "") {
+  port = 8000;
+}
 
 app.get('/', (req, res) => {
-  res.send('Hello World! It works')
+  res.send('Hello World!')
 });
 
-app.get('/hello', (req, res) => {
-  res.send('It works')
-});
-
-app.listen(8000, () => {
+app.listen(port, () => {
   console.log('Example app listening on port 8000!')
 });
