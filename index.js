@@ -25,11 +25,11 @@ app.use(myConnection(mysql, dbOptions, 'single'));
 
 /* -- Routes -- */
 app.get('/', (req, res) => {
-  res.send('Hello World! ' + process.env.DB_USER);
+  res.send('Hello World! ');
 });
 
-app.get('/login', (req, res) => {
-  res.send('Login page');
+app.get('/*', (req, res) => {
+  res.send('This page does not exists');
 });
 
 /* -- Port -- */
