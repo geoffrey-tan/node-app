@@ -10,25 +10,37 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var typeorm_1 = require("typeorm");
-var User = /** @class */ (function () {
-    function User() {
+var Users = /** @class */ (function () {
+    function Users() {
     }
     __decorate([
         typeorm_1.PrimaryGeneratedColumn(),
         __metadata("design:type", Number)
-    ], User.prototype, "id", void 0);
+    ], Users.prototype, "id", void 0);
     __decorate([
         typeorm_1.Column(),
         __metadata("design:type", String)
-    ], User.prototype, "firstName", void 0);
+    ], Users.prototype, "email", void 0);
     __decorate([
         typeorm_1.Column(),
         __metadata("design:type", String)
-    ], User.prototype, "lastName", void 0);
-    User = __decorate([
+    ], Users.prototype, "password", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", String)
+    ], Users.prototype, "firstName", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", String)
+    ], Users.prototype, "lastName", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", String)
+    ], Users.prototype, "bsn", void 0);
+    Users = __decorate([
         typeorm_1.Entity()
-    ], User);
-    return User;
+    ], Users);
+    return Users;
 }());
-exports.User = User;
-//# sourceMappingURL=User.js.map
+exports.Users = Users;
+//# sourceMappingURL=Users.js.map

@@ -40,20 +40,45 @@ require("reflect-metadata");
 var express = require("express");
 var bodyParser = require("body-parser");
 var typeorm_1 = require("typeorm");
-var User_1 = require("./entity/User");
+var Users_1 = require("./entity/Users");
+var Pinned_1 = require("./entity/Pinned");
+var Articles_1 = require("./entity/Articles");
+var Content_1 = require("./entity/Content");
 var port = process.env.PORT;
 if (port == null || port == "") { // Changes port to 8000 when opened locally
     port = "8000";
 }
 /* -- TypeORM Connection -- */
 typeorm_1.createConnection().then(function (connection) {
-    var userRepository = connection.getRepository(User_1.User);
+    var userRepository = connection.getRepository(Users_1.Users);
+    var pinnedRepository = connection.getRepository(Pinned_1.Pinned);
+    var articlesRepository = connection.getRepository(Articles_1.Articles);
+    var contentRepository = connection.getRepository(Content_1.Content);
     var app = express();
+    var path = require("path");
+    /* -- EJS -- */
     app.use(bodyParser.json());
+    app.set("views", path.join(__dirname, "../views/pages"));
+    app.set("view engine", "ejs");
     /* -- Routes -- */
     app.get("/", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+        var articles;
         return __generator(this, function (_a) {
-            res.send("Hello World!");
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, articlesRepository.find()];
+                case 1:
+                    articles = _a.sent();
+                    res.locals.articles = articles;
+                    res.render("index");
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    app.get("/artikel/:title", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+        var params;
+        return __generator(this, function (_a) {
+            params = req.params.title.replace(/_/g, " ");
+            res.send("article");
             return [2 /*return*/];
         });
     }); });

@@ -1,2 +1,49 @@
 <% include ../partials/header.ejs %>
 <% include ../partials/nav.ejs %>
+
+<body>
+    <header>
+        <h1>Wet & Regelgeving</h1>
+        <form id="search" action="" method="post">
+            <label for="search"></label>
+            <textarea id="value" name="search" placeholder="Zoeken op naam"></textarea>
+            <input type="submit" value="Verzenden">
+            <label for="category-select">Bron:</label>
+            <select id="category-select">
+                <option value="">Alles weergeven</option>
+                <option value="besluit">Besluit</option>
+                <option value="euVerordening">EU Verordening</option>
+                <option value="euRichtlijnen">EU Richtlijnen</option>
+                <option value="regelingen">Regelingen</option>
+                <option value="wet">Wet</option>
+            </select>
+        </form>
+    </header>
+
+    <main>
+        <!-- Pinned -->
+        <section>
+            <% for (let i = 0; i < articles.length; i++) {
+                let link = articles[i].title.replace(/ /g, "_"); %>
+                <a href="/artikel/<%= link %>">
+                    <article>
+                        <h2><%= articles[i].title %></h2>
+                    </article>
+                </a>
+            <% } %>
+        </section>
+
+        <!-- Articles -->
+        <section>
+            <% for (let i = 0; i < articles.length; i++) {
+                let link = articles[i].title.replace(/ /g, "_"); %>
+                <a href="/artikel/<%= link %>">
+                    <article>
+                        <h2><%= articles[i].title %></h2>
+                    </article>
+                </a>
+            <% } %>
+        </section>
+
+    </main>
+</body>

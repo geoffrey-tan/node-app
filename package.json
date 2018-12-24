@@ -9,7 +9,8 @@
   "author": "Geoffrey Tan",
   "license": "ISC",
   "engines": {
-    "node": "10.14.2"
+    "node": "10.14.2",
+    "npm": "6.4.1"
   },
   "devDependencies": {
     "typescript": "^3.2.2"
