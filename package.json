@@ -2,22 +2,27 @@
   "name": "app",
   "version": "1.0.0",
   "description": "A basic node.js app",
-  "main": "index.js",
+  "main": "/build/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node build/index.js"
   },
   "author": "Geoffrey Tan",
   "license": "ISC",
   "engines": {
     "node": "10.14.2"
   },
+  "devDependencies": {
+    "typescript": "^3.2.2"
+  },
   "dependencies": {
+    "@types/body-parser": "^1.17.0",
+    "@types/express": "^4.16.0",
+    "@types/node": "^10.12.18",
+    "body-parser": "^1.18.3",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
-    "express-myconnection": "^1.0.4",
-    "mysql": "^2.16.0"
-  },
-  "devDependencies": {
-    "dotenv": "^6.2.0"
+    "mysql": "^2.16.0",
+    "reflect-metadata": "^0.1.12",
+    "typeorm": "^0.2.9"
   }
 }
