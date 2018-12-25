@@ -4,13 +4,13 @@
 <body>
     <header>
         <h1>Wet & Regelgeving</h1>
-        <form id="search" action="" method="post">
+        <form id="search" action="/" method="post">
             <label for="search"></label>
-            <textarea id="value" name="search" placeholder="Zoeken op naam"></textarea>
-            <input type="submit" value="Verzenden">
-            <label for="category-select">Bron:</label>
-            <select id="category-select">
-                <option value="">Alles weergeven</option>
+            <textarea id="search" name="search" placeholder="Zoeken op naam"></textarea>
+            <input type="submit" value="Zoeken">
+            <label for="category">Bron:</label>
+            <select id="category" name="category">
+                <option value="Alles">Alles weergeven</option>
                 <option value="besluit">Besluit</option>
                 <option value="euVerordening">EU Verordening</option>
                 <option value="euRichtlijnen">EU Richtlijnen</option>
@@ -22,6 +22,7 @@
 
     <main>
         <!-- Pinned -->
+        <header><h1>Pinned</h1></header>
         <section>
             <% for (let i = 0; i < articles.length; i++) {
                 let link = articles[i].title.replace(/ /g, "_"); %>
@@ -34,6 +35,7 @@
         </section>
 
         <!-- Articles -->
+        <header><h1>Articles</h1></header>
         <section>
             <% for (let i = 0; i < articles.length; i++) {
                 let link = articles[i].title.replace(/ /g, "_"); %>

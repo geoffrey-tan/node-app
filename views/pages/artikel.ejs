@@ -1,0 +1,26 @@
+<% include ../partials/header.ejs %>
+<% include ../partials/nav.ejs %>
+
+<body>
+    <header>
+        <h1>Wet & Regelgeving</h1>
+        <nav>
+            <ul>
+                <a href="/"><li>Home</li></a>
+                <li><%= h1 %></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <header><h1><%= h1 %></h1></header>
+        <section>
+            <% for (let i = 0; i < content.content_id.length; i++) { %>
+            <article>
+                <h2><%= content.content_id[i].title %></h2>
+                <p><%= content.content_id[i].text %> %></p>
+            </article>
+            <% } %>
+        </section>
+    </main>
+</body>

@@ -38,7 +38,6 @@ var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 var express = require("express");
-var bodyParser = require("body-parser");
 var typeorm_1 = require("typeorm");
 var Users_1 = require("./entity/Users");
 var Pinned_1 = require("./entity/Pinned");
@@ -55,7 +54,16 @@ typeorm_1.createConnection().then(function (connection) {
     var articlesRepository = connection.getRepository(Articles_1.Articles);
     var contentRepository = connection.getRepository(Content_1.Content);
     var app = express();
+    var session = require("express-session");
+    var bodyParser = require("body-parser");
     var path = require("path");
+    app.use(bodyParser.urlencoded({
+        extended: true
+    }));
+    app.use(session({
+        secret: "@#$#@!", resave: false,
+        saveUninitialized: true,
+    }));
     /* -- EJS -- */
     app.use(bodyParser.json());
     app.set("views", path.join(__dirname, "../views/pages"));
@@ -74,35 +82,85 @@ typeorm_1.createConnection().then(function (connection) {
             }
         });
     }); });
+    app.post("/pinned", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+        var post;
+        return __generator(this, function (_a) {
+            post = {
+                id: req.body.id,
+            };
+            if (post.id > 0) {
+                session.pinned = session.pinned.push(post.id);
+                res.redirect("index");
+            }
+            else {
+                res.redirect('index');
+            }
+            return [2 /*return*/];
+        });
+    }); });
+    app.post("/", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+        var post, data, data;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    post = {
+                        search: req.body.search,
+                        category: req.body.category
+                    };
+                    if (!(post.category != "Alles")) return [3 /*break*/, 2];
+                    return [4 /*yield*/, articlesRepository
+                            .createQueryBuilder("article")
+                            .where("article.title like :title", { title: '%' + post.search + '%' })
+                            .andWhere("article.category = :category", { category: post.category })
+                            .getMany()];
+                case 1:
+                    data = _a.sent();
+                    return [3 /*break*/, 4];
+                case 2: return [4 /*yield*/, articlesRepository
+                        .createQueryBuilder("article")
+                        .where("article.title like :title", { title: '%' + post.search + '%' })
+                        .getMany()];
+                case 3:
+                    data = _a.sent();
+                    _a.label = 4;
+                case 4:
+                    if (data.length > 0) {
+                        res.locals.articles = data;
+                        res.locals.category = data[0].category;
+                        res.render("index");
+                    }
+                    else {
+                        res.render('404');
+                    }
+                    return [2 /*return*/];
+            }
+        });
+    }); });
     app.get("/artikel/:title", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-        var params;
+        var title, articles;
         return __generator(this, function (_a) {
-            params = req.params.title.replace(/_/g, " ");
-            res.send("article");
-            return [2 /*return*/];
-        });
-    }); });
-    app.get("/login", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            res.send("Login page");
-            return [2 /*return*/];
-        });
-    }); });
-    app.post("/login", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-        var user;
-        return __generator(this, function (_a) {
-            user = userRepository.find(req.body);
-            return [2 /*return*/];
-        });
-    }); });
-    app.get("/search/:search", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            res.send(req.params.search);
-            return [2 /*return*/];
+            switch (_a.label) {
+                case 0:
+                    title = req.params.title.replace(/_/g, " ");
+                    return [4 /*yield*/, articlesRepository.find({ where: { title: title }, relations: ["content_id"] })];
+                case 1:
+                    articles = _a.sent();
+                    if (articles.length > 0 && articles[0].content_id.length > 0) {
+                        res.locals.h1 = title;
+                        res.locals.content = articles[0];
+                        res.render("artikel");
+                    }
+                    else {
+                        res.render('404');
+                    }
+                    session.pinned = true;
+                    console.log(session.pinned);
+                    return [2 /*return*/];
+            }
         });
     }); });
     app.get('/*', function (req, res) {
-        res.send('This page does not exists');
+        res.render('404');
     });
     /* -- Express server -- */
     app.listen(port, function () {

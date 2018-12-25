@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var typeorm_1 = require("typeorm");
+var Content_1 = require("./Content");
 var Articles = /** @class */ (function () {
     function Articles() {
     }
@@ -25,6 +26,11 @@ var Articles = /** @class */ (function () {
         typeorm_1.Column(),
         __metadata("design:type", String)
     ], Articles.prototype, "category", void 0);
+    __decorate([
+        typeorm_1.OneToMany(function (type) { return Content_1.Content; }, function (content) { return content.article_id; }),
+        typeorm_1.JoinColumn({ name: "content_id" }),
+        __metadata("design:type", Array)
+    ], Articles.prototype, "content_id", void 0);
     Articles = __decorate([
         typeorm_1.Entity()
     ], Articles);

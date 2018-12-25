@@ -21,13 +21,23 @@ createConnection().then(connection => {
     const articlesRepository = connection.getRepository(Articles);
     const contentRepository = connection.getRepository(Content);
     const app = express();
+    var session = require("express-session");
+    const bodyParser = require("body-parser");
     var path = require("path");
+
+    app.use(bodyParser.urlencoded({
+        extended: true
+    }));
+    app.use(session({
+        secret: "@#$#@!", resave: false,
+        saveUninitialized: true,
+    }));
 
     /* -- EJS -- */
     app.use(bodyParser.json());
     app.set("views", path.join(__dirname, "../views/pages"));
     app.set("view engine", "ejs");
-    
+
     /* -- Routes -- */
     app.get("/", async (req: Request, res: Response) => {
         let articles = await articlesRepository.find();
@@ -37,26 +47,68 @@ createConnection().then(connection => {
         res.render("index");
     });
 
-    app.get("/artikel/:title", async (req: Request, res: Response) => {
-        let params = req.params.title.replace(/_/g, " ");
+    app.post("/pinned", async (req: Request, res: Response) => {
+        let post = {
+            id: req.body.id,
+        };
 
-        res.send("article");
-    });
-
-    app.get("/login", async (req: Request, res: Response) => {
-        res.send("Login page");
-    });
-
-    app.post("/login", async (req: Request, res: Response) => {
-        const user = userRepository.find(req.body);
-    });
+        if (post.id > 0) {
+            session.pinned = session.pinned.push(post.id);
     
-    app.get("/search/:search", async (req: Request, res: Response) => {
-        res.send(req.params.search);
+            res.redirect("index");
+        } else {
+            res.redirect('index');
+        }
+    });
+
+    app.post("/", async (req: Request, res: Response) => {
+        let post = {
+            search: req.body.search,
+            category: req.body.category
+        };
+
+        if (post.category != "Alles") {
+            var data = await articlesRepository
+            .createQueryBuilder("article")
+            .where("article.title like :title", {title: '%' + post.search + '%' })
+            .andWhere("article.category = :category", { category: post.category })
+            .getMany();
+        } else {
+            var data = await articlesRepository
+            .createQueryBuilder("article")
+            .where("article.title like :title", {title: '%' + post.search + '%' })
+            .getMany();
+        }
+
+        if (data.length > 0) {
+            res.locals.articles = data;
+            res.locals.category = data[0].category;
+    
+            res.render("index");
+        } else {
+            res.render('404');
+        }
+    });
+
+    app.get("/artikel/:title", async (req: Request, res: Response) => {
+        let title: string = req.params.title.replace(/_/g, " ");
+        let articles = await articlesRepository.find({ where: { title: title }, relations: ["content_id"] });
+
+        if (articles.length > 0 && articles[0].content_id.length > 0) {
+            res.locals.h1 = title;
+            res.locals.content = articles[0];
+    
+            res.render("artikel");
+        } else {
+            res.render('404');
+        }
+
+        session.pinned = true;
+        console.log(session.pinned);
     });
 
     app.get('/*', (req: Request, res: Response) => {
-        res.send('This page does not exists');
+        res.render('404');
     });
     
     /* -- Express server -- */
