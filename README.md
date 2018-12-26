@@ -15,7 +15,7 @@ In Terminal or CMD:
 ***
 The first step is deciding how the data model would look like for a given application. Which entities do you see? How do they relate? Bonus points if you provide an ERD.
 
-![ERD](https://via.placeholder.com/140x100)
+![ERD](http://geoffreytan.nl/content/images/erd.png)
 
 Entities:
 - Users
@@ -46,7 +46,7 @@ I would look into encrypting the received data before sending it to the database
 ***
 Most of the time, as a backend developer, you are building an api that will be consumed by other developers. How would you go about documenting your api in such a way that it will be easy for others developers to use it? You are free to use existing tools. Briefly explain / substantiate why you’ve chosen your described solution.
 
-I would make use of an README.md file written with markup language. With the markup language I can easily markup `var hello` or show code examples like below:
+I would make use of an README.md file and write it with markup language. With the markup language I can easily markup `var hello` or show code examples like below:
 
 ```
 var hello = "Hello World!";
