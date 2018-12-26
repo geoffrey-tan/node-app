@@ -6,8 +6,10 @@
         <h1>Wet & Regelgeving</h1>
         <form id="search" action="/zoeken" method="post">
             <label for="search"></label>
-            <textarea id="search" name="search" placeholder="Zoeken op naam"></textarea>
+            <textarea id="searchText" name="search" placeholder="Zoeken op naam"></textarea>
             <input type="submit" value="Zoeken">
+        </form>
+        <form id="filter" action="/filter" method="post">
             <label for="category">Bron:</label>
             <select id="category" name="category">
                 <option value="Alles">Alles weergeven</option>
@@ -17,6 +19,7 @@
                 <option value="regelingen">Regelingen</option>
                 <option value="wet">Wet</option>
             </select>
+            <input type="submit" value="Filter">
         </form>
     </header>
 
@@ -25,14 +28,14 @@
         <% if (locals.pinned != undefined && locals.pinned.length > 0) { %>
             <header><h1>Pinned</h1></header>
             <section>
-                <% for (let i = 0; i < pinned.length; i++) { %>
-                    <!-- let link = pinned[i].id.replace(/ /g, "_"); %> -->
-                    <a href="/pinned/<%= pinned[i].article_id %>">
+                <% for (let i = 0; i < pinned.length; i++) {
+                    let link = pinned[i].article_id.title.replace(/ /g, "_"); %>
+                    <a href="/pinned/<%= pinned[i].article_id.id %>">
                         <h3>Pin</h3>
                     </a>
-                    <a href="/artikel/<%= pinned[i].id %>">
+                    <a href="/artikel/<%= link %>">
                         <article>
-                            <h2><%= pinned[i].id %></h2>
+                            <h2><%= pinned[i].article_id.title %></h2>
                         </article>
                     </a>
                 <% } %>
@@ -56,4 +59,5 @@
         </section>
 
     </main>
+    <% include ../partials/footer.ejs %>
 </body>

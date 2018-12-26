@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var typeorm_1 = require("typeorm");
 var Content_1 = require("./Content");
+var Pinned_1 = require("./Pinned");
 var Articles = /** @class */ (function () {
     function Articles() {
     }
@@ -31,6 +32,10 @@ var Articles = /** @class */ (function () {
         typeorm_1.JoinColumn({ name: "content_id" }),
         __metadata("design:type", Array)
     ], Articles.prototype, "content_id", void 0);
+    __decorate([
+        typeorm_1.OneToOne(function (type) { return Pinned_1.Pinned; }, function (pinned) { return pinned.article_id; }),
+        __metadata("design:type", Pinned_1.Pinned)
+    ], Articles.prototype, "pinned_id", void 0);
     Articles = __decorate([
         typeorm_1.Entity()
     ], Articles);

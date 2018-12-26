@@ -22,26 +22,22 @@ createConnection().then(connection => {
     const contentRepository = connection.getRepository(Content);
     const app = express();
     const bodyParser = require("body-parser");
-    var session = require("express-session");
-    var path = require("path");
+    const path = require("path");
 
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({
         extended: true
     }));
-    app.use(session({
-        secret: "@#$#@!", resave: false,
-        saveUninitialized: true,
-    }));
 
     /* -- EJS -- */
     app.set("views", path.join(__dirname, "../views/pages"));
     app.set("view engine", "ejs");
+    app.use(express.static(path.join(__dirname, "../public"))); // Static files in public folder
     
     // -- Index -- //
     app.get("/", async (req: Request, res: Response) => {
         let articles = await articlesRepository.find();
-        let pinned = await pinnedRepository.find({ where: { user_id: 1 } });
+        let pinned = await pinnedRepository.find({ where: { user_id: 1 }, relations: ["article_id"] });
 
         res.locals.articles = articles;
         res.locals.pinned = pinned;
@@ -50,7 +46,7 @@ createConnection().then(connection => {
     });
 
     app.get("/pinned/:id", async (req: Request, res: Response) => {
-        var params = req.params.id
+        let params = req.params.id
         let articlesId = await articlesRepository.find({ where: { id: params } });
         let pinnedId = await pinnedRepository.find({ where: { user_id: 1, article_id: params }});
 
@@ -72,20 +68,35 @@ createConnection().then(connection => {
     app.post("/zoeken", async (req: Request, res: Response) => {
         let post = {
             search: req.body.search,
+        };
+
+        let data = await articlesRepository
+        .createQueryBuilder("article")
+        .where("article.title like :title", {title: "%" + post.search + "%" })
+        .getMany();
+
+        if (data.length > 0) {
+            res.locals.articles = data;
+            res.locals.category = data[0].category;
+    
+            res.render("index");
+        } else {
+            res.render("404");
+        }
+    });
+
+    app.post("/filter", async (req: Request, res: Response) => {
+        let post = {
             category: req.body.category
         };
 
         if (post.category != "Alles") {
             var data = await articlesRepository
             .createQueryBuilder("article")
-            .where("article.title like :title", {title: '%' + post.search + '%' })
-            .andWhere("article.category = :category", { category: post.category })
+            .where("article.category = :category", { category: post.category })
             .getMany();
         } else {
-            var data = await articlesRepository
-            .createQueryBuilder("article")
-            .where("article.title like :title", {title: '%' + post.search + '%' })
-            .getMany();
+            var data = await articlesRepository.find();
         }
 
         if (data.length > 0) {
@@ -94,7 +105,7 @@ createConnection().then(connection => {
     
             res.render("index");
         } else {
-            res.render('404');
+            res.render("404");
         }
     });
 
@@ -109,17 +120,17 @@ createConnection().then(connection => {
     
             res.render("article");
         } else {
-            res.render('404');
+            res.render("404");
         }
     });
 
     // -- 404 -- //
-    app.get('/*', (req: Request, res: Response) => {
-        res.render('404');
+    app.get("/*", (req: Request, res: Response) => {
+        res.render("404");
     });
     
     /* -- Express server -- */
     app.listen(port, () => {
-        console.log('App listening on port ' + port);
+        console.log("App listening on port " + port);
     });
 }).catch(error => console.log(error));
