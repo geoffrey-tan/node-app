@@ -13,7 +13,7 @@ In Terminal or CMD:
 
 ### Question 1: data model
 ***
-The first step is deciding how the data model would look like for a given application. Which entities do you see? How do they relate? Bonus points if you provide an ERD.
+**The first step is deciding how the data model would look like for a given application. Which entities do you see? How do they relate? Bonus points if you provide an ERD.**
 
 ![ERD](http://geoffreytan.nl/content/images/erd.png)
 
@@ -32,19 +32,19 @@ To make the data model work for 'Books' and 'Author', a new entity 'Authors 'wil
 
 ### Question 2: api
 ***
-What would the calls for the data and the pin modification to the API look like? How will the response data be formatted and what kind of parameters will have to be available for this page to work properly?
+**What would the calls for the data and the pin modification to the API look like? How will the response data be formatted and what kind of parameters will have to be available for this page to work properly?**
 
 X
 
 ### Question 3: security
 ***
-Imagine we are storing the BSN numbers of our application’s users and we use a cloud hosted database like Amazon RDS. We want to make sure the BSN numbers are stored so that they can’t be simply retrieved from the database. How would you go about storing this kind of sensitive information?
+**Imagine we are storing the BSN numbers of our application’s users and we use a cloud hosted database like Amazon RDS. We want to make sure the BSN numbers are stored so that they can’t be simply retrieved from the database. How would you go about storing this kind of sensitive information?**
 
 I would look into encrypting the received data before sending it to the database.
 
 ### Question 4: documentation
 ***
-Most of the time, as a backend developer, you are building an api that will be consumed by other developers. How would you go about documenting your api in such a way that it will be easy for others developers to use it? You are free to use existing tools. Briefly explain / substantiate why you’ve chosen your described solution.
+**Most of the time, as a backend developer, you are building an api that will be consumed by other developers. How would you go about documenting your api in such a way that it will be easy for others developers to use it? You are free to use existing tools. Briefly explain / substantiate why you’ve chosen your described solution.**
 
 I would make use of an README.md file and write it with markup language. With the markup language I can easily markup `var hello` or show code examples like below:
 
@@ -56,7 +56,7 @@ Another program I like which is probably not well know is Quiver for mac. It's a
 
 ### Question 5: deployment
 ***
-One of the product’s designers want to see a running version of your application so you want to get the application running on the internet somewhere. It doesn’t have to be production ready, but it should incorporate a database which can be used by the application. Briefly explain / substantiate how you would setup the environment.
+**One of the product’s designers want to see a running version of your application so you want to get the application running on the internet somewhere. It doesn’t have to be production ready, but it should incorporate a database which can be used by the application. Briefly explain / substantiate how you would setup the environment.**
 
 For Node.js I found Heroku, a website that will host Node.js and other programming environments for free. This is of course with it's limits but is great for testing purposes.
 
