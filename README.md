@@ -52,7 +52,7 @@ I would make use of an README.md file and write it with markup language. With th
 var hello = "Hello World!";
 console.log(hello);
 ```
-Another program I like which is probably not well know is Quiver for mac. It's a note book witch can highlight different programming languages and export it to HTML or PDF for sharing with other people. It's meant to be a personal notebook but potentially can be used to make documentations.
+Another program I like which is probably not well know is Quiver for mac. It's a note book which can highlight different programming languages and export it to HTML or PDF for sharing with other people. It's meant to be a personal notebook but potentially can be used to make documentations.
 
 ### Question 5: deployment
 ***
