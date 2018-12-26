@@ -54,9 +54,10 @@ typeorm_1.createConnection().then(function (connection) {
     var articlesRepository = connection.getRepository(Articles_1.Articles);
     var contentRepository = connection.getRepository(Content_1.Content);
     var app = express();
-    var session = require("express-session");
     var bodyParser = require("body-parser");
+    var session = require("express-session");
     var path = require("path");
+    app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({
         extended: true
     }));
@@ -65,40 +66,61 @@ typeorm_1.createConnection().then(function (connection) {
         saveUninitialized: true,
     }));
     /* -- EJS -- */
-    app.use(bodyParser.json());
     app.set("views", path.join(__dirname, "../views/pages"));
     app.set("view engine", "ejs");
-    /* -- Routes -- */
+    // -- Index -- //
     app.get("/", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-        var articles;
+        var articles, pinned;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, articlesRepository.find()];
                 case 1:
                     articles = _a.sent();
+                    return [4 /*yield*/, pinnedRepository.find({ where: { user_id: 1 } })];
+                case 2:
+                    pinned = _a.sent();
                     res.locals.articles = articles;
+                    res.locals.pinned = pinned;
                     res.render("index");
                     return [2 /*return*/];
             }
         });
     }); });
-    app.post("/pinned", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-        var post;
+    app.get("/pinned/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+        var params, articlesId, pinnedId, pinned, unpin;
         return __generator(this, function (_a) {
-            post = {
-                id: req.body.id,
-            };
-            if (post.id > 0) {
-                session.pinned = session.pinned.push(post.id);
-                res.redirect("index");
+            switch (_a.label) {
+                case 0:
+                    params = req.params.id;
+                    return [4 /*yield*/, articlesRepository.find({ where: { id: params } })];
+                case 1:
+                    articlesId = _a.sent();
+                    return [4 /*yield*/, pinnedRepository.find({ where: { user_id: 1, article_id: params } })];
+                case 2:
+                    pinnedId = _a.sent();
+                    if (!(articlesId.length > 0 && pinnedId.length < 1)) return [3 /*break*/, 4];
+                    pinned = new Pinned_1.Pinned();
+                    pinned.user_id = 1;
+                    pinned.article_id = params;
+                    return [4 /*yield*/, pinnedRepository.save(pinned)];
+                case 3:
+                    _a.sent();
+                    return [3 /*break*/, 7];
+                case 4: return [4 /*yield*/, pinnedRepository.findOne({ where: { user_id: 1, article_id: params } })];
+                case 5:
+                    unpin = _a.sent();
+                    return [4 /*yield*/, pinnedRepository.remove(unpin)];
+                case 6:
+                    _a.sent();
+                    _a.label = 7;
+                case 7:
+                    res.redirect("../../");
+                    return [2 /*return*/];
             }
-            else {
-                res.redirect('index');
-            }
-            return [2 /*return*/];
         });
     }); });
-    app.post("/", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    // -- Search & Filter -- //
+    app.post("/zoeken", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
         var post, data, data;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -136,6 +158,7 @@ typeorm_1.createConnection().then(function (connection) {
             }
         });
     }); });
+    // -- Article -- //
     app.get("/artikel/:title", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
         var title, articles;
         return __generator(this, function (_a) {
@@ -148,17 +171,16 @@ typeorm_1.createConnection().then(function (connection) {
                     if (articles.length > 0 && articles[0].content_id.length > 0) {
                         res.locals.h1 = title;
                         res.locals.content = articles[0];
-                        res.render("artikel");
+                        res.render("article");
                     }
                     else {
                         res.render('404');
                     }
-                    session.pinned = true;
-                    console.log(session.pinned);
                     return [2 /*return*/];
             }
         });
     }); });
+    // -- 404 -- //
     app.get('/*', function (req, res) {
         res.render('404');
     });
@@ -166,5 +188,5 @@ typeorm_1.createConnection().then(function (connection) {
     app.listen(port, function () {
         console.log('App listening on port ' + port);
     });
-});
+}).catch(function (error) { return console.log(error); });
 //# sourceMappingURL=index.js.map

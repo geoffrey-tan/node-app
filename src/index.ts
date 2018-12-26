@@ -21,10 +21,11 @@ createConnection().then(connection => {
     const articlesRepository = connection.getRepository(Articles);
     const contentRepository = connection.getRepository(Content);
     const app = express();
-    var session = require("express-session");
     const bodyParser = require("body-parser");
+    var session = require("express-session");
     var path = require("path");
 
+    app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({
         extended: true
     }));
@@ -34,34 +35,41 @@ createConnection().then(connection => {
     }));
 
     /* -- EJS -- */
-    app.use(bodyParser.json());
     app.set("views", path.join(__dirname, "../views/pages"));
     app.set("view engine", "ejs");
-
-    /* -- Routes -- */
+    
+    // -- Index -- //
     app.get("/", async (req: Request, res: Response) => {
         let articles = await articlesRepository.find();
+        let pinned = await pinnedRepository.find({ where: { user_id: 1 } });
 
         res.locals.articles = articles;
+        res.locals.pinned = pinned;
 
         res.render("index");
     });
 
-    app.post("/pinned", async (req: Request, res: Response) => {
-        let post = {
-            id: req.body.id,
-        };
+    app.get("/pinned/:id", async (req: Request, res: Response) => {
+        var params = req.params.id
+        let articlesId = await articlesRepository.find({ where: { id: params } });
+        let pinnedId = await pinnedRepository.find({ where: { user_id: 1, article_id: params }});
 
-        if (post.id > 0) {
-            session.pinned = session.pinned.push(post.id);
-    
-            res.redirect("index");
-        } else {
-            res.redirect('index');
+        if (articlesId.length > 0 && pinnedId.length < 1) { // Article is found and is not pinned
+            let pinned = new Pinned();
+            pinned.user_id = 1;
+            pinned.article_id = params;
+
+            await pinnedRepository.save(pinned);
+        } else { // Article is pinned
+            let unpin = await pinnedRepository.findOne({ where: { user_id:1, article_id: params } });
+            await pinnedRepository.remove(unpin);
         }
+        
+        res.redirect("../../");
     });
 
-    app.post("/", async (req: Request, res: Response) => {
+    // -- Search & Filter -- //
+    app.post("/zoeken", async (req: Request, res: Response) => {
         let post = {
             search: req.body.search,
             category: req.body.category
@@ -90,23 +98,22 @@ createConnection().then(connection => {
         }
     });
 
+    // -- Article -- //
     app.get("/artikel/:title", async (req: Request, res: Response) => {
-        let title: string = req.params.title.replace(/_/g, " ");
+        let title: string = req.params.title.replace(/_/g, " "); // Replaces underscore with spaces
         let articles = await articlesRepository.find({ where: { title: title }, relations: ["content_id"] });
 
         if (articles.length > 0 && articles[0].content_id.length > 0) {
             res.locals.h1 = title;
             res.locals.content = articles[0];
     
-            res.render("artikel");
+            res.render("article");
         } else {
             res.render('404');
         }
-
-        session.pinned = true;
-        console.log(session.pinned);
     });
 
+    // -- 404 -- //
     app.get('/*', (req: Request, res: Response) => {
         res.render('404');
     });
@@ -115,4 +122,4 @@ createConnection().then(connection => {
     app.listen(port, () => {
         console.log('App listening on port ' + port);
     });
-});
+}).catch(error => console.log(error));
