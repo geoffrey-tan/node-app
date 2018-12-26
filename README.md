@@ -34,13 +34,14 @@ To make the data model work for 'Books' and 'Author', a new entity 'Authors 'wil
 ***
 **What would the calls for the data and the pin modification to the API look like? How will the response data be formatted and what kind of parameters will have to be available for this page to work properly?**
 
-X
+I'm not sure how to answer this question so I will explain a mental model of how I think it works:
+The client side post data in JSON, for example a search query gets parsed into a string in `Request.body.search`. Or the search query can direct the browser to an address where the query is stored in `Request.params.search`.
 
 ### Question 3: security
 ***
 **Imagine we are storing the BSN numbers of our application’s users and we use a cloud hosted database like Amazon RDS. We want to make sure the BSN numbers are stored so that they can’t be simply retrieved from the database. How would you go about storing this kind of sensitive information?**
 
-I would look into encrypting the received data before sending it to the database.
+I would look into encrypting the received data before sending it to the database. It can also be an option to restrict certain database users to read the database table containing the BSN.
 
 ### Question 4: documentation
 ***
@@ -62,7 +63,7 @@ For Node.js I found Heroku, a website that will host Node.js and other programmi
 
 I would try to write code to make the application run on both the local computer and the online version. For example I had to use `process.env.PORT` for the web application and change it to `8000` for the local version with an if statement.
 
-In Heroku you push your commit to their git and then Heroku will automatically deployed it on their server. Little setup is needed to make it work. You would need the Heroku CLI installed and you have to setup some environment variables that are stored in .env locally.
+In Heroku you push your commit to their git and then Heroku will automatically deployed it on their server. You would need the Heroku CLI installed and you have to setup some environment variables that are stored in .env locally.
 
 Online version:
 https://app-geoffrey-tan.herokuapp.com/
